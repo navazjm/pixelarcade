@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  pixelarcade-db:
+    image: postgres
+    restart: always
+    container_name: pixelarcade-postgres
+    ports:
+      - 5433:5432
+    env_file:
+      - .env
+    environment:
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+
+volumes:
+  postgres:

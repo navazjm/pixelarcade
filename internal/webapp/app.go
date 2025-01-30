@@ -19,12 +19,12 @@ func New() *Application {
 		os.Exit(1)
 	}
 
-	srv := &Application{
+	app := &Application{
 		Config: cfg,
 		Logger: logger,
 	}
 
-	return srv
+	return app
 }
 
 func (app *Application) InitServices(db *sql.DB) {}

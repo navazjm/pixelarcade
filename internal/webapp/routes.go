@@ -27,7 +27,7 @@ func (app *Application) Routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/api/healthcheck", app.healthcheckHandler)
 
-	return app.recoverPanic(app.secureHeaders(app.logRequest(app.enableCORS(app.validateOrigin(app.rateLimit(router))))))
+	return app.recoverPanic(app.secureHeaders(app.logRequest(app.enforceCORS(app.rateLimit(router)))))
 }
 
 func (app *Application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {

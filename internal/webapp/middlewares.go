@@ -57,7 +57,7 @@ func (app *Application) recoverPanic(next http.Handler) http.Handler {
 	})
 }
 
-func (app *Application) enableCORS(next http.Handler) http.Handler {
+func (app *Application) enforceCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")
 		w.Header().Add("Vary", "Access-Control-Request-Method")
@@ -77,6 +77,8 @@ func (app *Application) enableCORS(next http.Handler) http.Handler {
 			}
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+			// Handle pre-flight requests (OPTIONS)
 			if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
 				w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE")
 				w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
@@ -85,27 +87,6 @@ func (app *Application) enableCORS(next http.Handler) http.Handler {
 				return
 			}
 		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (app *Application) validateOrigin(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		allowedOrigins := app.Config.TrustedOrigins
-		origin := r.Header.Get("Origin")
-		foundOrigin := false
-		for _, allowed := range allowedOrigins {
-			if origin == allowed {
-				foundOrigin = true
-				break
-			}
-		}
-
-		if !foundOrigin {
-			response.OriginNotAllowed(w, r, app.Logger, origin)
-			return
-		}
-
 		next.ServeHTTP(w, r)
 	})
 }

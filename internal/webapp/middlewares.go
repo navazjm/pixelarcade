@@ -63,20 +63,26 @@ func (app *Application) enableCORS(next http.Handler) http.Handler {
 		w.Header().Add("Vary", "Access-Control-Request-Method")
 		origin := r.Header.Get("Origin")
 		if origin != "" {
+			app.Logger.Info("CORS request", "origin", origin)
+			trusted := false
 			for i := range app.Config.TrustedOrigins {
-				if origin != app.Config.TrustedOrigins[i] {
-					continue
+				if origin == app.Config.TrustedOrigins[i] {
+					trusted = true
+					break
 				}
-				w.Header().Set("Access-Control-Allow-Origin", origin)
-				w.Header().Set("Access-Control-Allow-Credentials", "true")
-				if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
-					w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, PUT, PATCH, DELETE")
-					w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+			}
+			if !trusted {
+				response.OriginNotAllowed(w, r, app.Logger, origin)
+				return
+			}
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+			if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
+				w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE")
+				w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 
-					w.WriteHeader(http.StatusOK)
-					return
-				}
-				break
+				w.WriteHeader(http.StatusOK)
+				return
 			}
 		}
 		next.ServeHTTP(w, r)

@@ -26,7 +26,7 @@ func NewConfig() (*Config, error) {
 	// default config for PROD
 
 	cfg.Version = "0.1.0"
-	cfg.TrustedOrigins = []string{"https://pixelarcade.dev"} // TODO: update when ready to deploy
+	cfg.TrustedOrigins = []string{"https://pixelarcade.dev"}
 
 	flag.IntVar(&cfg.Port, "port", 8080, "Server port")
 	flag.StringVar(&cfg.Env, "env", "prod", "Environment (dev|prod)")

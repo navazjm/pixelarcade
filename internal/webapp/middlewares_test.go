@@ -1,54 +1,11 @@
 package webapp
 
 import (
-	"context"
-	"fmt"
-	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
-
-// TODO: find better location for these mocks as other places might need them
-
-// MockHandler is a mock implementation of slog.Handler for testing.
-type MockHandler struct {
-	LogOutput string
-}
-
-func (h *MockHandler) HandleLog(record slog.Record) error {
-	h.LogOutput = fmt.Sprintf("Level: %s, Message: %s", record.Level, record.Message)
-	return nil
-}
-
-func (m *MockHandler) Enabled(ctx context.Context, level slog.Level) bool {
-	return true
-}
-
-func (m *MockHandler) Handle(ctx context.Context, r slog.Record) error {
-	return nil
-}
-func (m *MockHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	return &MockHandler{}
-}
-func (m *MockHandler) WithGroup(name string) slog.Handler {
-	return &MockHandler{}
-}
-
-func NewMockLogger() *slog.Logger {
-	handler := &MockHandler{}
-	return slog.New(handler) // return a new logger using the mock handler
-}
-
-func setupTestApp() *Application {
-	return &Application{
-		Config: &Config{
-			TrustedOrigins: []string{"https://example.com", "https://trusted.com"},
-		},
-		Logger: NewMockLogger(),
-	}
-}
 
 func normalizeHeader(header string) string {
 	return strings.Join(strings.Fields(header), "")

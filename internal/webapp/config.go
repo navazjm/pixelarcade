@@ -23,7 +23,11 @@ func NewConfig() (*Config, error) {
 	var err error
 	cfg := &Config{}
 
+	// default config for PROD
+
 	cfg.Version = "0.1.0"
+	cfg.TrustedOrigins = []string{"https://pixelarcade.dev"} // TODO: update when ready to deploy
+
 	flag.IntVar(&cfg.Port, "port", 8080, "Server port")
 	flag.StringVar(&cfg.Env, "env", "prod", "Environment (dev|prod)")
 	flag.StringVar(&cfg.DB.Dsn, "db-dsn", "", "PostgreSQL DSN")
@@ -37,6 +41,8 @@ func NewConfig() (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
+		// allow requests from frontend client
+		cfg.TrustedOrigins = []string{"http://localhost:3000", "http://127.0.0.1:3000"}
 	}
 
 	// Use the env variable for DSN if the flag is not provided
@@ -46,9 +52,6 @@ func NewConfig() (*Config, error) {
 			return nil, fmt.Errorf("missing required DB DSN in environment or flags")
 		}
 	}
-
-	// TOOD: include domain when pushing to production
-	cfg.TrustedOrigins = []string{"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080", "http://127.0.0.1:8080"}
 
 	return cfg, nil
 }

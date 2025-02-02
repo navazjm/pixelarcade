@@ -20,7 +20,7 @@ func LogError(r *http.Request, logger *slog.Logger, err error) {
 func Error(w http.ResponseWriter, r *http.Request, logger *slog.Logger, status int, message any) {
 	env := json.Envelope{"error": message}
 
-	err := json.Write(w, status, env, nil)
+	err := json.WriteResponse(w, status, env, nil)
 	if err != nil {
 		LogError(r, logger, err)
 		w.WriteHeader(500)

@@ -39,7 +39,7 @@ func (app *Application) healthcheckHandler(w http.ResponseWriter, r *http.Reques
 		},
 	}
 
-	err := json.Write(w, http.StatusOK, env, nil)
+	err := json.WriteResponse(w, http.StatusOK, env, nil)
 	if err != nil {
 		response.ServerError(w, r, app.Logger, err)
 	}

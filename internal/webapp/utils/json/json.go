@@ -11,10 +11,10 @@ import (
 
 type Envelope map[string]any
 
-// Define a writeJSON() helper for sending responses. This takes the destination
+// Helper for sending responses. This takes the destination
 // http.ResponseWriter, the HTTP status code to send, the data to encode to JSON, and a
 // header map containing any additional HTTP headers we want to include in the response.
-func Write(w http.ResponseWriter, status int, data Envelope, headers http.Header) error {
+func WriteResponse(w http.ResponseWriter, status int, data Envelope, headers http.Header) error {
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func Write(w http.ResponseWriter, status int, data Envelope, headers http.Header
 	return nil
 }
 
-func Read(w http.ResponseWriter, r *http.Request, dst any) error {
+func ReadRequestBody(w http.ResponseWriter, r *http.Request, dst any) error {
 	// Use http.MaxBytesReader() to limit the size of the request body to 1MB.
 	maxBytes := 1_048_576
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))

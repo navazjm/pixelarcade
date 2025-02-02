@@ -14,7 +14,7 @@ func TestWrite(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("X-Custom-Header", "test")
 
-	err := Write(w, http.StatusOK, data, headers)
+	err := WriteResponse(w, http.StatusOK, data, headers)
 	if err != nil {
 		t.Fatalf("Write returned an unexpected error: %v", err)
 	}
@@ -54,7 +54,7 @@ func TestRead_ValidJSON(t *testing.T) {
 		Name string `json:"name"`
 	}
 
-	err := Read(w, req, &data)
+	err := ReadRequestBody(w, req, &data)
 	if err != nil {
 		t.Fatalf("Read returned an unexpected error: %v", err)
 	}
@@ -73,7 +73,7 @@ func TestRead_InvalidJSON(t *testing.T) {
 		Name string `json:"name"`
 	}
 
-	err := Read(w, req, &data)
+	err := ReadRequestBody(w, req, &data)
 	if err == nil {
 		t.Fatal("expected error for invalid JSON, got nil")
 	}
@@ -92,7 +92,7 @@ func TestRead_UnknownField(t *testing.T) {
 		Name string `json:"name"`
 	}
 
-	err := Read(w, req, &data)
+	err := ReadRequestBody(w, req, &data)
 	if err == nil {
 		t.Fatal("expected error for unknown field, got nil")
 	}
@@ -110,7 +110,7 @@ func TestRead_EmptyBody(t *testing.T) {
 		Name string `json:"name"`
 	}
 
-	err := Read(w, req, &data)
+	err := ReadRequestBody(w, req, &data)
 	if err == nil {
 		t.Fatal("expected error for empty body, got nil")
 	}
@@ -125,7 +125,7 @@ func TestRead_MaxBytes(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(largeJSON))
 	req.Header.Set("Content-Type", "application/json")
 
-	err := Read(httptest.NewRecorder(), req, &map[string]interface{}{})
+	err := ReadRequestBody(httptest.NewRecorder(), req, &map[string]interface{}{})
 	if err == nil || err.Error() != "body must not be larger than 1048576 bytes" {
 		t.Errorf("unexpected error message: %v", err)
 	}

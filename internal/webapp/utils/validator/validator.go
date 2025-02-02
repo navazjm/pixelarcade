@@ -33,6 +33,16 @@ func (v *Validator) AddError(key, message string) {
 	}
 }
 
+// RemoveError removes an error message from the map if it exists.
+func (v *Validator) RemoveError(key string) {
+	delete(v.Errors, key) // No need to check if the key exists; delete handles it.
+}
+
+// ResetErrors clears all error messages in the map by reinitialize the Errors map to an empty one.
+func (v *Validator) ResetErrors() {
+	v.Errors = make(map[string]string) //
+}
+
 // Check adds an error message to the map only if a validation check is not 'ok'.
 func (v *Validator) Check(ok bool, key, message string) {
 	if !ok {

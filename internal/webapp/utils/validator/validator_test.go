@@ -35,6 +35,47 @@ func TestValidator_AddError(t *testing.T) {
 	}
 }
 
+func TestValidator_RemoveError(t *testing.T) {
+	v := New()
+
+	// Add an error and check if it exists
+	v.AddError("email", "Invalid email address")
+	if v.Errors["email"] != "Invalid email address" {
+		t.Errorf("Expected 'Invalid email address' but got %v", v.Errors["email"])
+	}
+
+	// Remove the error and check if it is removed
+	v.RemoveError("email")
+	if _, exists := v.Errors["email"]; exists {
+		t.Errorf("Expected 'email' error to be removed, but it still exists")
+	}
+
+	// Ensure removing a non-existent error doesn't affect the map
+	v.RemoveError("nonexistent")
+	if len(v.Errors) != 0 {
+		t.Errorf("Expected no errors after removing non-existent key, but got %v", v.Errors)
+	}
+}
+
+func TestValidator_ResetErrors(t *testing.T) {
+	v := New()
+
+	// Add some errors
+	v.AddError("email", "Invalid email address")
+	v.AddError("username", "Username required")
+
+	// Check that errors are present
+	if len(v.Errors) != 2 {
+		t.Errorf("Expected 2 errors, but got %v", len(v.Errors))
+	}
+
+	// Reset errors and check if the map is cleared
+	v.ResetErrors()
+	if len(v.Errors) != 0 {
+		t.Errorf("Expected no errors after reset, but got %v", len(v.Errors))
+	}
+}
+
 func TestValidator_Check(t *testing.T) {
 	v := New()
 

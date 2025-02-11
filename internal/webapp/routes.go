@@ -27,7 +27,13 @@ func (app *Application) Routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/api/healthcheck", app.healthcheckHandler)
 
-	return app.recoverPanic(app.secureHeaders(app.logRequest(app.enforceCORS(app.rateLimit(router)))))
+	router.HandlerFunc(http.MethodPost, "/api/auth/register", app.AuthService.RegisterNewUserHandler)
+	router.HandlerFunc(http.MethodPost, "/api/auth/login", app.AuthService.LoginUserHandler)
+	router.HandlerFunc(http.MethodDelete, "/api/auth/logout", app.AuthService.RequireAuthenticatedUser(app.AuthService.LogoutUserHandler))
+	router.HandlerFunc(http.MethodGet, "/api/auth/user", app.AuthService.RequireAuthenticatedUser(app.AuthService.GetCurrentUserHandler))
+	router.HandlerFunc(http.MethodPatch, "/api/auth/user", app.AuthService.RequireAuthenticatedUser(app.AuthService.UpdateCurrentUserHandler))
+
+	return app.recoverPanic(app.secureHeaders(app.logRequest(app.enforceCORS(app.rateLimit(app.AuthService.Authenticate(router))))))
 }
 
 func (app *Application) healthcheckHandler(w http.ResponseWriter, r *http.Request) {

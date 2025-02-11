@@ -1,12 +1,14 @@
 package json
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"testing"
 )
 
 type Envelope map[string]any
@@ -122,4 +124,22 @@ func ReadRequestBody(w http.ResponseWriter, r *http.Request, dst any) error {
 	}
 
 	return nil
+}
+
+// Helper function to create request with JSON body to test route handlers
+func NewTestRequest(t *testing.T, method, url string, body interface{}) *http.Request {
+	t.Helper()
+	var buf bytes.Buffer
+	if body != nil {
+		err := json.NewEncoder(&buf).Encode(body)
+		if err != nil {
+			t.Fatalf("Failed to encode request body: %v", err)
+		}
+	}
+	req, err := http.NewRequest(method, url, &buf)
+	if err != nil {
+		t.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	return req
 }

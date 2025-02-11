@@ -5,12 +5,14 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/navazjm/pixelarcade/internal/webapp/auth"
 	"github.com/navazjm/pixelarcade/internal/webapp/utils/logger"
 )
 
 type Application struct {
-	Config *Config
-	Logger *slog.Logger
+	Config      *Config
+	Logger      *slog.Logger
+	AuthService *auth.Service
 }
 
 func New() *Application {
@@ -29,8 +31,9 @@ func New() *Application {
 	return app
 }
 
-// TODO:
-func (app *Application) InitServices(db *sql.DB) {}
+func (app *Application) InitServices(db *sql.DB) {
+	app.AuthService = auth.NewService(db, app.Logger)
+}
 
 // ============================================================================
 // Mock App for testing purposes

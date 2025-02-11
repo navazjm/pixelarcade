@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestNewApplication(t *testing.T) {
+func TestNewApplicationAndInitServices(t *testing.T) {
 	app := New()
 
 	if app.Logger == nil {
@@ -14,7 +14,9 @@ func TestNewApplication(t *testing.T) {
 	if app.Config == nil {
 		t.Errorf("expected config to be initialized, got nil")
 	}
-}
 
-// TODO:
-func TestApplicationInitServices(t *testing.T) {}
+	app.InitServices(nil)
+	if app.AuthService == nil {
+		t.Errorf("expected Auth service to be initialized, got nil")
+	}
+}

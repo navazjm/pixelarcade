@@ -115,4 +115,6 @@ func TestNewConfig_WithFlagEnvDev(t *testing.T) {
 	if err.Error() != expectedErr {
 		t.Errorf("expected error '%s', got '%s'", expectedErr, err.Error())
 	}
+
+	resetFlags()
 }

@@ -1,4 +1,4 @@
-package parm
+package param
 
 import (
 	"context"

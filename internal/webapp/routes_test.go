@@ -51,3 +51,5 @@ func TestRoutes(t *testing.T) {
 		}
 	})
 }
+
+// TODO: Add E2E tests here

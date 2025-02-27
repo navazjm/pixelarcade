@@ -19,4 +19,7 @@ func TestNewApplicationAndInitServices(t *testing.T) {
 	if app.AuthService == nil {
 		t.Errorf("expected Auth service to be initialized, got nil")
 	}
+	if app.GamesService == nil {
+		t.Errorf("expected Games service to be initialized, got nil")
+	}
 }

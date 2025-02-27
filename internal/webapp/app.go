@@ -6,13 +6,15 @@ import (
 	"os"
 
 	"github.com/navazjm/pixelarcade/internal/webapp/auth"
+	"github.com/navazjm/pixelarcade/internal/webapp/games"
 	"github.com/navazjm/pixelarcade/internal/webapp/utils/logger"
 )
 
 type Application struct {
-	Config      *Config
-	Logger      *slog.Logger
-	AuthService *auth.Service
+	Config       *Config
+	Logger       *slog.Logger
+	AuthService  *auth.Service
+	GamesService *games.Service
 }
 
 func New() *Application {
@@ -33,6 +35,7 @@ func New() *Application {
 
 func (app *Application) InitServices(db *sql.DB) {
 	app.AuthService = auth.NewService(db, app.Logger)
+	app.GamesService = games.NewService(db, app.Logger)
 }
 
 // ============================================================================

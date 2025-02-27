@@ -33,6 +33,12 @@ func (app *Application) Routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/api/auth/user", app.AuthService.RequireAuthenticatedUser(app.AuthService.GetCurrentUserHandler))
 	router.HandlerFunc(http.MethodPatch, "/api/auth/user", app.AuthService.RequireAuthenticatedUser(app.AuthService.UpdateCurrentUserHandler))
 
+	router.HandlerFunc(http.MethodGet, "/api/games", app.GamesService.GetGamesHandler)
+	router.HandlerFunc(http.MethodGet, "/api/games/:id", app.GamesService.GetGameByIDHandler)
+	router.HandlerFunc(http.MethodPost, "/api/games/:id/scores", app.AuthService.RequireAuthenticatedUser(app.GamesService.PostScoreHandler))
+	router.HandlerFunc(http.MethodGet, "/api/games/:id/scores", app.GamesService.GetScoresByGameIDHandler)
+	router.HandlerFunc(http.MethodGet, "/api/games/:id/scores/user", app.AuthService.RequireAuthenticatedUser(app.GamesService.GetUserScoresByGameIDHandler))
+
 	return app.recoverPanic(app.secureHeaders(app.logRequest(app.enforceCORS(app.rateLimit(app.AuthService.Authenticate(router))))))
 }
 

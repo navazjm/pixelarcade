@@ -1,6 +1,7 @@
 package param
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strconv"
@@ -19,4 +20,11 @@ func ReadID(r *http.Request) (int64, error) {
 	}
 
 	return id, nil
+}
+
+// Injects an ID into the request's context for testing.
+func InjectID(r *http.Request, id int64) *http.Request {
+	params := httprouter.Params{httprouter.Param{Key: "id", Value: strconv.FormatInt(id, 10)}}
+	ctx := context.WithValue(r.Context(), httprouter.ParamsKey, params)
+	return r.WithContext(ctx)
 }

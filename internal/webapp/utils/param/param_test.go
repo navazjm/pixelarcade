@@ -83,3 +83,51 @@ func TestReadID(t *testing.T) {
 		})
 	}
 }
+
+func TestInjectID(t *testing.T) {
+	tests := []struct {
+		name       string
+		inputID    int64
+		expectedID string
+	}{
+		{
+			name:       "valid positive ID",
+			inputID:    123,
+			expectedID: "123",
+		},
+		{
+			name:       "zero ID",
+			inputID:    0,
+			expectedID: "0",
+		},
+		{
+			name:       "negative ID",
+			inputID:    -1,
+			expectedID: "-1",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a dummy request
+			r, err := http.NewRequest("GET", "/some-path", nil)
+			if err != nil {
+				t.Fatalf("failed to create request: %v", err)
+			}
+
+			// Inject ID into the request context
+			r = InjectID(r, tt.inputID)
+
+			// Retrieve parameters from context
+			params, ok := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
+			if !ok {
+				t.Fatal("failed to retrieve params from context")
+			}
+
+			// Ensure the ID matches expected
+			if len(params) == 0 || params[0].Key != "id" || params[0].Value != tt.expectedID {
+				t.Errorf("expected ID %q, got %q", tt.expectedID, params[0].Value)
+			}
+		})
+	}
+}
